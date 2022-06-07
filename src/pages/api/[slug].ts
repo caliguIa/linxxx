@@ -6,14 +6,26 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (!slug || typeof slug !== 'string') {
     res.statusCode = 404;
-    res.send(JSON.stringify({ message: 'Not found' }));
+    res.send(JSON.stringify({ message: 'Please use a slug' }));
+
+    return;
   }
-  /* const data = await prisma.shortLink.findFirst({
+
+  const data = await prisma.shortLink.findFirst({
     where: {
       slug: {
-        equals: query.id,
+        equals: slug,
       },
     },
   });
-  res.status(200).json(data); */
+
+  if (!data) {
+    res.statusCode = 404;
+    res.send(JSON.stringify({ message: 'Slug not found' }));
+
+    return;
+  }
+
+  return res.redirect(data.url);
+
 };
